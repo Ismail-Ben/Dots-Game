@@ -4,8 +4,6 @@ import random
 
 import time
 
-
-
 WIDTH = 700
 
 HEIGHT = 400
@@ -17,14 +15,15 @@ ENEMY_MOVE = 10
 class Jeu:
     def __init__(self):
         self.app = Tk()
-        self.c = Canvas(self.app,width=WIDTH,height=HEIGHT, bg="grey")
-        self.app.resizable(False,False)
+        self.c = Canvas(self.app, width=WIDTH, height=HEIGHT, bg="grey")
+        self.app.resizable(False, False)
         self.c.pack()
         self.generator = EnemyGenerator()
         self.enemies = []
 
-        enemy = self.generator.generate(self.c)
-        self.enemies.append(enemy)
+        for i in range(50):
+            enemy = self.generator.generate(self.c)
+            self.enemies.append(enemy)
 
         self.update()
         self.app.mainloop()
@@ -40,6 +39,8 @@ class Enemy:
 
     def __init__(self):
 
+        self.c = None
+
         self.side = 0
 
         self.move = (0, 0)
@@ -47,45 +48,23 @@ class Enemy:
         self.obj = None
 
     def update(self):
-        pass
+        x, y = self.c.coords(self.obj)[:2]
+        x_actuel = x
+        y_actuel = y
 
-    def enemy_movement_x(self, enemy):
+        x += self.move[0]
+        y += self.move[1]
+        if x >= WIDTH - ENEMY_SIZE:
+            self.move = (self.move[0] * -1, self.move[1])
+        elif x <= 0:
+            self.move = (self.move[0]*-1,self.move[1])
+        if y >= HEIGHT - ENEMY_SIZE:
+            self.move = (self.move[0] , self.move[1]*-1)
+        elif y <= 0:
+            self.move = (self.move[0] , self.move[1]*-1)
 
-        print(c.coords(enemy)[0])
+        self.c.move(self.obj, x - x_actuel, y - y_actuel)
 
-
-
-        if c.coords(enemy)[0] >= WIDTH - ENEMY_SIZE:
-
-            self.movex = False
-
-        if c.coords(enemy)[0] <= 0:
-
-            self.movex = True
-
-
-
-        if self.movex:
-
-            c.move(enemy, 10, 0)
-
-            c.update()
-
-            c.after(50, self.enemy_movement_x, enemy)
-
-        if not self.movex:
-
-            c.move(enemy, -10, 0)
-
-            c.update()
-
-            c.after(50, self.enemy_movement_x, enemy)
-
-
-
-    def enemy_movement_y(self):
-
-        pass
 
 class EnemyGenerator:
 
@@ -97,6 +76,7 @@ class EnemyGenerator:
     def generate(self, c):
         enemy = Enemy()
         enemy.side = self.side
+        enemy.c = c
 
         if self.side == 0:
             # top
@@ -124,13 +104,6 @@ class EnemyGenerator:
         return enemy
 
 
-
-
-
-
-
-
-
 Jeu()
 
 """root = Tk()
@@ -144,8 +117,6 @@ c.pack()
 a = enemy_generator()
 
 a.horizontal_enemy_generator()"""
-
-
 
 a.horizontal_enemy_generator()
 
